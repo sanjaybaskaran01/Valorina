@@ -20,25 +20,32 @@ def convert(seconds):
     return f"{hour} hours {minutes} minutes and {seconds} seconds remaining"
 
 async def getSkinDetails(headers,skinPanel,region):
+    skinIDcost=[]
+    skinNames=[]
+    offerSkins=[]
     session = aiohttp.ClientSession()
     async with session.get(f'https://shared.{region}.a.pvp.net/content-service/v2/content', headers=headers) as r:
         content = json.loads(await r.text())
     async with session.get(f'https://pd.{region}.a.pvp.net/store/v1/offers/', headers=headers) as r:
         offers=json.loads(await r.text())
-    
+    # print(headers)
+    # print(offers)
+    # print(skinPanel)
+
+    for item in skinPanel['SingleItemOffers']:
+        async with session.get(f'https://valorant-api.com/v1/weapons/skinlevels/{item}', headers=headers) as r:
+            content=json.loads(await r.text())
+            skinNames.append({"id":content["data"]["uuid"].lower(),"name":content["data"]["displayName"]})
+            
+    # print(skinNames)
+
     await session.close()
-    
-    skinIDcost=[]
-    skinNames=[]
-    offerSkins=[]
     
     for item in offers["Offers"]:
         if (skinPanel['SingleItemOffers'].count(item["OfferID"].lower())>0):
             skinIDcost.append({"id":item["OfferID"].lower(),"cost":list(item["Cost"].values())[0]})
     
-    for item in content['SkinLevels']:
-        if (skinPanel['SingleItemOffers'].count(item["ID"].lower())>0):
-            skinNames.append({"id":item["ID"].lower(),"name":item["Name"]})
+    
 
     for item in skinNames:
         for item2 in skinIDcost:
