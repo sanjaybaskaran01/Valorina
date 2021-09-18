@@ -2,45 +2,14 @@ import re
 import aiohttp
 import asyncio
 import json
-
 import os
+import getSkinOffers
+
 from dotenv import load_dotenv
 
 load_dotenv()
 
-async def getStore(headers,user_id):
-    session = aiohttp.ClientSession()
-    async with session.get(f'https://pd.AP.a.pvp.net/store/v2/storefront/{user_id}', headers=headers) as r:
-        data = json.loads(await r.text())
-    # print(data)
-    skinPanel=data['SkinsPanelLayout']
-    await getSkinDetails(headers,skinPanel)
-
-    await session.close()
-
-def convert(seconds):
-    seconds = seconds % (24 * 3600)
-    hour = seconds // 3600
-    seconds %= 3600
-    minutes = seconds // 60
-    seconds %= 60
-    return f"{hour} hours {minutes} minutes and {seconds} seconds remaining"
-
-async def getSkinDetails(headers,skinPanel):
-    session = aiohttp.ClientSession()
-    async with session.get(f'https://shared.ap.a.pvp.net/content-service/v2/content', headers=headers) as r:
-        data = json.loads(await r.text())
-    # print(skinPanel['SingleItemOffers'])
-    skinNames=[]
-    for item in data['SkinLevels']:
-        if (skinPanel['SingleItemOffers'].count(item["ID"].lower())>0):
-            skinNames.append(item["Name"])
-    print(skinNames)
-    print(convert(skinPanel['SingleItemOffersRemainingDurationInSeconds']))
-    await session.close()
-
-async def run(username, password):
-    
+async def run(username, password,region):
     session = aiohttp.ClientSession()
     data = {
         'client_id': 'play-valorant-web-prod',
@@ -79,7 +48,7 @@ async def run(username, password):
     headers['X-Riot-ClientPlatform'] = "ew0KCSJwbGF0Zm9ybVR5cGUiOiAiUEMiLA0KCSJwbGF0Zm9ybU9TIjogIldpbmRvd3MiLA0KCSJwbGF0Zm9ybU9TVmVyc2lvbiI6ICIxMC4wLjE5MDQyLjEuMjU2LjY0Yml0IiwNCgkicGxhdGZvcm1DaGlwc2V0IjogIlVua25vd24iDQp9"
     headers['X-Riot-ClientVersion'] = "pbe-shipping-55-604424"
 
-    await getStore(headers,user_id)
+    return await getSkinOffers.getStore(headers,user_id,region)
 
 if __name__ == '__main__':
-    asyncio.get_event_loop().run_until_complete(run(os.getenv('USERNAME'),os.getenv('PASSWORD')))
+    asyncio.get_event_loop().run_until_complete(run(os.getenv('USERNAME'),os.getenv('PASSWORD'),os.getenv('REGION')))
