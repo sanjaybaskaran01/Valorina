@@ -2,6 +2,7 @@ import pymongo
 from pymongo import MongoClient
 import os
 from dotenv import load_dotenv
+import bcrypt
 
 load_dotenv()
 MONGO = os.getenv('MONGO')
@@ -18,6 +19,11 @@ def addUserDb(username,password,region):
             }
         collection.insert_one(user)
         return True
+
+def hashPass(password):
+    hashed_pass=bcrypt.hashpw(password.encode('utf-8'),bcrypt.gensalt(10))
+    print(hashed_pass)
+    return hashed_pass
 
 def checkUser(username,region):
     if getUser(username,region):

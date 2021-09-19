@@ -3,7 +3,6 @@ import aiohttp
 import asyncio
 import json
 import os
-import getSkinOffers
 
 from dotenv import load_dotenv
 
@@ -53,7 +52,7 @@ async def run(username, password,region):
         headers['X-Riot-Entitlements-JWT'] = entitlements_token
         headers['X-Riot-ClientPlatform'] = "ew0KCSJwbGF0Zm9ybVR5cGUiOiAiUEMiLA0KCSJwbGF0Zm9ybU9TIjogIldpbmRvd3MiLA0KCSJwbGF0Zm9ybU9TVmVyc2lvbiI6ICIxMC4wLjE5MDQyLjEuMjU2LjY0Yml0IiwNCgkicGxhdGZvcm1DaGlwc2V0IjogIlVua25vd24iDQp9"
         headers['X-Riot-ClientVersion'] = "pbe-shipping-55-604424"
-        return await getSkinOffers.getStore(headers,user_id,region)
+        return (headers,user_id)
 
 if __name__ == '__main__':
     asyncio.get_event_loop().run_until_complete(run(os.getenv('USERNAME'),os.getenv('PASSWORD'),os.getenv('REGION')))
