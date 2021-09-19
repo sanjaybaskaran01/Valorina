@@ -2,17 +2,18 @@ import pymongo
 from pymongo import MongoClient
 import os
 from dotenv import load_dotenv
-import bcrypt
+from cryptography.fernet import Fernet
 
 load_dotenv()
 MONGO = os.getenv('MONGO')
-
+KEY = (os.getenv('KEY')).encode('utf-8')
 cluster = MongoClient(MONGO)
 db = cluster["discord"]
 
 def addUserDb(username,password,region):
     if not checkUser(username,region):
         collection = db[region]
+        password=encryptPass(password)
         user={
             "username":username,
             "password":password
@@ -20,10 +21,9 @@ def addUserDb(username,password,region):
         collection.insert_one(user)
         return True
 
-def hashPass(password):
-    hashed_pass=bcrypt.hashpw(password.encode('utf-8'),bcrypt.gensalt(10))
-    print(hashed_pass)
-    return hashed_pass
+def encryptPass(password):
+    password=Fernet(KEY).encrypt(password.encode('utf-8'))
+    return password
 
 def checkUser(username,region):
     if getUser(username,region):
@@ -33,6 +33,7 @@ def checkUser(username,region):
 
 def updatePass(username,password,region):
     if checkUser(username,region):
+        password=encryptPass(password)
         collection=db[region]
         collection.update_one(
             {'username':username},
@@ -41,7 +42,11 @@ def updatePass(username,password,region):
 
 def getUser(username,region):
     collection=db[region]
-    return collection.find_one({"username": username})
+    user = collection.find_one({"username": username})
+    if user==None:
+        return False
+    user["password"]=(Fernet(KEY).decrypt(user["password"])).decode('utf-8')
+    return user
         
 
 
