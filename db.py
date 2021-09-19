@@ -1,3 +1,4 @@
+from typing import Collection
 import pymongo
 from pymongo import MongoClient
 import os
@@ -48,5 +49,21 @@ def getUser(username,region):
     user["password"]=(Fernet(KEY).decrypt(user["password"])).decode('utf-8')
     return user
         
+def addReminder(username,region,discord_id,weapon):    
+    collection = db['reminders']
+    data={
+            "username":username,
+            "region":region,
+            "discord_id":discord_id,
+            "weapon":weapon,
+            }
+    collection.insert_one(data)
+    return True
 
-
+def getReminders():    
+    collection = db['reminders']
+    reminders = []
+    cursor = collection.find({})
+    for document in cursor:
+          reminders.append(document)
+    return reminders
