@@ -35,6 +35,35 @@ async def skinbot(ctx,*,args=None):
     else:
         await ctx.channel.send("Enter argument")
 
+@bot.event
+async def on_message(message):
+    if isinstance(message.channel, discord.channel.DMChannel) and message.author != bot.user:
+        args=message.content.split()
+        print(args)
+        print(len(args))
+        if len(args)==3:
+            username,password,region = args
+            try:
+                res = await getHeader.run(username,password,region)
+                for item in res[0]:
+                    await message.channel.send(f"{item[0]}      {item[1]}")
+                    await message.channel.send(item[2])
+                await message.channel.send(res[1])
+            except:
+                await message.channel.send("Please retry!")
+        else:
+            await message.channel.send("Enter 3 arguments <username> <password> <region>")
+
+# @bot.command()
+# async def adduser(ctx,*,args=None):
+#     if isinstance(ctx.channel, discord.channel.DMChannel) and ctx.author != bot.user:
+#         if args!=None and len(args.split())==3:
+#             username,password,region = args.split()
+
+
+
+
+
 
 
 bot.run(TOKEN)
