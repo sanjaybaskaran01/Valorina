@@ -31,6 +31,14 @@ def checkUser(username,region):
     else:
         return False
 
+def updatePass(username,password,region):
+    if checkUser(username,region):
+        collection=db[region]
+        collection.update_one(
+            {'username':username},
+            {"$set":{'password':password}})
+        return True
+
 def getUser(username,region):
     collection=db[region]
     return collection.find_one({"username": username})

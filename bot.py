@@ -12,6 +12,7 @@ load_dotenv()
 TOKEN = os.getenv('TOKEN')
 
 bot = commands.Bot(command_prefix="+")
+bot.remove_command('help')
 
 @bot.event
 async def on_ready():
@@ -29,11 +30,11 @@ async def store(ctx,*,args=None):
             password=user['password']
             try:
                 headers,user_id = await getHeader.run(username,password,region)
-                res = await getSkinOffers.getStore(headers,user_id,region)
-                if res==401:
-                    await ctx.channel.send("Update Password!")
+                if headers==403:
+                    await ctx.channel.send("Update Password! \n+updatepass <username> <updated password> <region>")
                     return
                 else:
+                    res = await getSkinOffers.getStore(headers,user_id,region)
                     for item in res[0]:
                         embed = discord.Embed(title=item[0], description=f"Valorant Points:{item[1]}", color=discord.Color.red())
                         embed.set_thumbnail(url=item[2])
@@ -61,8 +62,8 @@ async def adduser(ctx,*,args=None):
                     if(db.checkUser(username,region)):
                         await ctx.channel.send("User already exists")
                     else:
-                        res = await getHeader.run(username,password,region)
-                        if(res==401):
+                        _,res = await getHeader.run(username,password,region)
+                        if(res==403):
                             await ctx.channel.send("Incorrect credentials!")
                             return
                         else:
@@ -97,7 +98,45 @@ async def bal(ctx,*,args=None):
     else:
         await ctx.channel.send("Invalid command \nEnter +bal <username> <region>")
 
-        
+@bot.command(name="help")
+async def help_(context):
+    myEmbed = discord.Embed(
+        title="Help",
+        description="Summary of all available commands",
+        color=discord.Color.red())
+    myEmbed.set_thumbnail(url="https://media.valorant-api.com/currencies/e59aa87c-4cbf-517a-5983-6e81511be9b7/displayicon.png")
+    myEmbed.add_field(
+        name="+store", value="Shows all the available weapon skins in your store", inline=False)
+    myEmbed.add_field(name="+bal",value="Shows the balance of your account", inline=False)
+    myEmbed.set_footer(text="End of Help Section", icon_url="https://media.valorant-api.com/currencies/e59aa87c-4cbf-517a-5983-6e81511be9b7/displayicon.png")
+    await context.message.channel.send(embed=myEmbed)
+
+@bot.command(name="updatepass")
+async def updatepass(ctx,*,args=None):
+    if isinstance(ctx.channel, discord.channel.DMChannel) and ctx.author != bot.user:
+        if args!=None and len(args.split())==3:
+            username,password,region = args.split()
+            if region not in ['ap','eu','ko','na']:
+                await ctx.channel.send("Incorrect Region")
+                return
+            else:
+                try:
+                    if(db.checkUser(username,region)):
+                        _,res = await getHeader.run(username,password,region)
+                        if(res==403):
+                            await ctx.channel.send("Incorrect credentials!")
+                            return
+                        else:
+                            res=db.updatePass(username,password,region)
+                            if (res):
+                                await ctx.channel.send("Password updated successfully")
+                    else:
+                        await ctx.channel.send("User does not exist, please create your user\n+adduser <username> <password> <region>")
+                except:
+                    await ctx.channel.send("Please try again!")
+        else:
+            await ctx.channel.send("Invalid command \nEnter +adduser <username> <password> <region>")
+
 # @bot.event
 # async def on_message(message):
 #     if isinstance(message.channel, discord.channel.DMChannel) and message.author != bot.user:
