@@ -23,22 +23,19 @@ async def getSkinDetails(headers,skinPanel,region):
     skinIDcost=[]
     skinNames=[]
     offerSkins=[]
+    
     session = aiohttp.ClientSession()
+
     async with session.get(f'https://shared.{region}.a.pvp.net/content-service/v2/content', headers=headers) as r:
         content = json.loads(await r.text())
     async with session.get(f'https://pd.{region}.a.pvp.net/store/v1/offers/', headers=headers) as r:
         offers=json.loads(await r.text())
-    # print(headers)
-    # print(offers)
-    # print(skinPanel)
 
     for item in skinPanel['SingleItemOffers']:
         async with session.get(f'https://valorant-api.com/v1/weapons/skinlevels/{item}', headers=headers) as r:
             content=json.loads(await r.text())
             skinNames.append({"id":content["data"]["uuid"].lower(),"name":content["data"]["displayName"]})
             
-    # print(skinNames)
-
     await session.close()
     
     for item in offers["Offers"]:
