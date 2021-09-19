@@ -48,14 +48,15 @@ async def store(ctx,*,args=None):
                     embed=smallEmbed("Offer ends in",res[1])
                     await ctx.channel.send(embed=embed)
             except:
-                await ctx.channel.send("Please retry")
+                embed=exceptionEmbed()
+                await ctx.channel.send(embed=embed)
         else:
-            embed=smallEmbed("Add user","Example:+adduser <username> <password> <region>")
+            embed=smallEmbed("Add user","+adduser <username> <password> <region>")
             await ctx.author.send(embed=embed)
             embed=smallEmbed("Add user","Please add your user in private message!")
             await ctx.channel.send(embed=embed)
     else:
-        embed=invalidArguments("Example:+store <username> <region>")
+        embed=invalidArguments("+store <username> <region>")
         await ctx.channel.send(embed=embed)
 
 @bot.command(name="adduser")
@@ -71,23 +72,23 @@ async def adduser(ctx,*,args=None):
                 try:
                     if(db.checkUser(username,region)):
                         embed=smallEmbed("User already exists","Please check +help for available commands")
-                        await ctx.channel.send(embed)
+                        await ctx.channel.send(embed=embed)
                     else:
                         _,res = await getHeader.run(username,password,region)
                         if(res==403):
-                            embed=smallEmbed("Incorrect credentials!","Please check +help for available commands")
+                            embed=smallEmbed("Incorrect credentials!","Your login credentials don't match an account in our system")
                             await ctx.channel.send(embed=embed)
                             return
                         else:
                             res=db.addUserDb(username,password,region)
                             if res:
-                                embed = discord.Embed(title="User Added!", description=f"User has been successfully added", color=discord.Color.red())
-                                embed.set_thumbnail(url="https://emoji.gg/assets/emoji/confetti.gif")
+                                embed=thumbnailEmbed("User Added!","User has been successfully added","https://emoji.gg/assets/emoji/confetti.gif")
                                 await ctx.channel.send(embed=embed)
                 except:
-                    await ctx.channel.send("Please try again!")
+                    embed=exceptionEmbed()
+                    await ctx.channel.send(embed=embed)
         else:
-            embed=invalidArguments("Example:+adduser <username> <password> <region>")
+            embed=invalidArguments("+adduser <username> <password> <region>")
             await ctx.channel.send(embed=embed)
 
 @bot.command(name="bal")
@@ -108,26 +109,27 @@ async def bal(ctx,*,args=None):
                 embed.set_thumbnail(url="https://media.valorant-api.com/currencies/e59aa87c-4cbf-517a-5983-6e81511be9b7/displayicon.png")
                 await ctx.channel.send(embed=embed)
             except:
-                await ctx.channel.send("Please try again!")
+                embed=exceptionEmbed()
+                await ctx.channel.send(embed)
         else:
-            await ctx.author.send("Use +adduser to add your user!\nExample:+adduser <username> <password> <region>")
+            await ctx.author.send("Use +adduser to add your user!\n+adduser <username> <password> <region>")
             await ctx.channel.send("Please add your user in DM")
     else:
-        embed=invalidArguments("Example:+bal <username> <region>")
+        embed=invalidArguments("+bal <username> <region>")
         await ctx.channel.send(embed=embed)
 
 @bot.command(name="help")
 async def help_(context):
-    myEmbed = discord.Embed(
+    helpEmbed = discord.Embed(
         title="Help",
         description="Summary of all available commands",
         color=discord.Color.red())
-    myEmbed.set_thumbnail(url="https://media.valorant-api.com/currencies/e59aa87c-4cbf-517a-5983-6e81511be9b7/displayicon.png")
-    myEmbed.add_field(
+    helpEmbed.set_thumbnail(url="https://media.valorant-api.com/currencies/e59aa87c-4cbf-517a-5983-6e81511be9b7/displayicon.png")
+    helpEmbed.add_field(
         name="+store", value="Shows all the available weapon skins in your store", inline=False)
-    myEmbed.add_field(name="+bal",value="Shows the balance of your account", inline=False)
-    myEmbed.set_footer(text="End of Help Section", icon_url="https://media.valorant-api.com/currencies/e59aa87c-4cbf-517a-5983-6e81511be9b7/displayicon.png")
-    await context.message.channel.send(embed=myEmbed)
+    helpEmbed.add_field(name="+bal",value="Shows the balance of your account", inline=False)
+    helpEmbed.set_footer(text="End of Help Section", icon_url="https://media.valorant-api.com/currencies/e59aa87c-4cbf-517a-5983-6e81511be9b7/displayicon.png")
+    await context.message.channel.send(embed=helpEmbed)
 
 @bot.command(name="updatepass")
 async def updatepass(ctx,*,args=None):
@@ -143,18 +145,22 @@ async def updatepass(ctx,*,args=None):
                     if(db.checkUser(username,region)):
                         _,res = await getHeader.run(username,password,region)
                         if(res==403):
-                            await ctx.channel.send("Incorrect credentials!")
+                            embed=smallEmbed("Incorrect credentials!","Your login credentials don't match an account in our system")
+                            await ctx.channel.send(embed=embed)
                             return
                         else:
                             res=db.updatePass(username,password,region)
                             if (res):
-                                await ctx.channel.send("Password updated successfully")
+                                embed=thumbnailEmbed("Password updated!","Password has been updated successfully!","https://emoji.gg/assets/emoji/confetti.gif")
+                                await ctx.channel.send(embed=embed)
                     else:
-                        await ctx.channel.send("User does not exist, please create your user\n+adduser <username> <password> <region>")
+                        embed=thumbnailEmbed("User does not exist","+adduser <username> <password> <region>","https://c.tenor.com/mVmgrmhBgJoAAAAM/raze-valorant.gif")
+                        await ctx.channel.send(embed=embed)
                 except:
-                    await ctx.channel.send("Please try again!")
+                    embed=exceptionEmbed()
+                    await ctx.channel.send(embed=embed)
         else:
-            embed=invalidArguments("Example:+updatepass <username> <password> <region>")
+            embed=invalidArguments("+updatepass <username> <password> <region>")
             await ctx.channel.send(embed=embed)
    
 bot.run(TOKEN)
