@@ -54,19 +54,7 @@ async def adduser(ctx,*,args=None):
                 else:
                     await ctx.channel.send("User already exists")
 
-@bot.command()
-async def adduser(ctx,*,args=None):
-    if isinstance(ctx.channel, discord.channel.DMChannel) and ctx.author != bot.user:
-        if args!=None and len(args.split())==3:
-            username,password,region = args.split()
-            if region not in ['ap','eu','ko','na']:
-                await ctx.channel.send("Incorrect Region")
-                return
-            else:
-                if(db.addUserDb(username,password,region)==True):
-                    await ctx.channel.send("User added")
-                else:
-                    await ctx.channel.send("User already exists")
+                # await ctx.channel.send("Correct region")
 
 # @bot.event
 # async def on_message(message):
@@ -86,5 +74,5 @@ async def adduser(ctx,*,args=None):
 #                 await message.channel.send("Please retry!")
 #         else:
 #             await message.channel.send("Enter 3 arguments <username> <password> <region>")
-
+        
 bot.run(TOKEN)
