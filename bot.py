@@ -16,7 +16,7 @@ async def on_ready():
     print(f"We have logged in as {bot.user}")
 
 @bot.command()
-async def skinbot(ctx,*,args=None):
+async def store(ctx,*,args=None):
     if args!=None and len(args.split())==2:
         username,region=args.split()
         if region not in ['ap','eu','ko','na']:
@@ -27,18 +27,24 @@ async def skinbot(ctx,*,args=None):
             password=user['password']
             try:
                 res = await getHeader.run(username,password,region)
-                for item in res[0]:
-                    await ctx.channel.send(f"{item[0]}      {item[1]}")
-                    await ctx.channel.send(item[2])
-                await ctx.channel.send(res[1])
+                if res==401:
+                    await ctx.channel.send("Update Password!")
+                    return
+                else:
+                    embedVar = discord.Embed(title="Title", description="Desc", color=0x00ff00)
+                    for item in res[0]:
+                        embed = discord.Embed(title=item[0], description=f"Valorant Points:{item[1]}", color=discord.Color.red())
+                        embed.set_thumbnail(url=item[2])
+                        await ctx.channel.send(embed=embed)
+                    embed = discord.Embed(title="Offer ends in", description=res[1], color=discord.Color.red())
+                    await ctx.channel.send(embed=embed)
             except:
                 await ctx.channel.send("Please retry")
         else:
-            await ctx.author.send("Use +adduser to add your user!")
-            await ctx.author.send("Example:+adduser <username> <password> <region>")
+            await ctx.author.send("Use +adduser to add your user!\nExample:+adduser <username> <password> <region>")
             await ctx.channel.send("Please add your user in DM")
     else:
-        await ctx.channel.send("Enter argument")
+        await ctx.channel.send("Invalid arguments \nEnter +store <username> <region>")
 
 @bot.command()
 async def adduser(ctx,*,args=None):
@@ -49,10 +55,22 @@ async def adduser(ctx,*,args=None):
                 await ctx.channel.send("Incorrect Region")
                 return
             else:
-                if(db.addUserDb(username,password,region)==True):
-                    await ctx.channel.send("User added")
-                else:
-                    await ctx.channel.send("User already exists")
+                try:
+                    if(db.checkUser(username,region)):
+                        await ctx.channel.send("User already exists")
+                    else:
+                        res = await getHeader.run(username,password,region)
+                        if(res==401):
+                            await ctx.channel.send("Incorrect credentials!")
+                            return
+                        else:
+                            db.addUserDb(username,password,region)
+                            await ctx.channel.send("User added")
+                except:
+                    await ctx.channel.send("Please try again!")
+        else:
+            await ctx.channel.send("Invalid command \nEnter +adduser <username> <password> <region>")
+
 
                 # await ctx.channel.send("Correct region")
 
