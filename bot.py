@@ -19,8 +19,12 @@ TOKEN = os.getenv('TOKEN')
 bot = commands.Bot(command_prefix="+")
 bot.remove_command('help')
 
-@tasks.loop(seconds=60)
-async def check():
+@bot.event
+async def on_ready():
+    print(f"We have logged in as {bot.user}")
+
+@tasks.loop(hours=24)
+async def sendReminder():
     reminders = db.getReminders()
     for reminder in reminders:
         user = await bot.fetch_user(int(reminder['discord_id']))
@@ -50,12 +54,7 @@ async def check():
             embed=smallEmbed("Add user","Please add your user in private message!")
             await user.send(embed=embed)
 
-check.start()
-
-@bot.event
-async def on_ready():
-    print(f"We have logged in as {bot.user}")
-
+sendReminder.start()
 
 @bot.command(name="store")
 async def store(ctx,*,args=None):
@@ -86,10 +85,11 @@ async def store(ctx,*,args=None):
                 embed=exceptionEmbed()
                 await ctx.channel.send(embed=embed)
         else:
-            embed=smallEmbed("Add user","+adduser <username> <password> <region>")
+            embed=smallEmbed("Add user!","+adduser <username> <password> <region>")
             await ctx.author.send(embed=embed)
-            embed=smallEmbed("Add user","Please add your user in private message!")
-            await ctx.channel.send(embed=embed)
+            if not isinstance(ctx.channel, discord.channel.DMChannel) and ctx.author != bot.user:
+                embed=smallEmbed("Add user","Please add your user in private message!")
+                await ctx.channel.send(embed=embed)
     else:
         embed=invalidArguments("+store <username> <region>")
         await ctx.channel.send(embed=embed)
@@ -125,6 +125,11 @@ async def adduser(ctx,*,args=None):
         else:
             embed=invalidArguments("+adduser <username> <password> <region>")
             await ctx.channel.send(embed=embed)
+    elif not isinstance(ctx.channel,discord.channel.DMChannel):
+        embed=smallEmbed("Add user!","+adduser <username> <password> <region>")
+        await ctx.author.send(embed=embed)
+        embed=smallEmbed("Incorrect channel","Please use this command in private message!")
+        await ctx.channel.send(embed=embed)
 
 @bot.command(name="bal")
 async def bal(ctx,*,args=None):
@@ -147,8 +152,11 @@ async def bal(ctx,*,args=None):
                 embed=exceptionEmbed()
                 await ctx.channel.send(embed)
         else:
-            await ctx.author.send("Use +adduser to add your user!\n+adduser <username> <password> <region>")
-            await ctx.channel.send("Please add your user in DM")
+            embed=smallEmbed("Add user!","+adduser <username> <password> <region>")
+            await ctx.author.send(embed=embed)
+            if not isinstance(ctx.channel, discord.channel.DMChannel) and ctx.author != bot.user:
+                embed=smallEmbed("Add user","Please add your user in private message!")
+                await ctx.channel.send(embed=embed)
     else:
         embed=invalidArguments("+bal <username> <region>")
         await ctx.channel.send(embed=embed)
@@ -159,6 +167,10 @@ async def help_(context):
     helpEmbed.set_thumbnail(url="https://media.valorant-api.com/currencies/e59aa87c-4cbf-517a-5983-6e81511be9b7/displayicon.png")
     helpEmbed.add_field(name="+store", value="Shows all the available weapon skins in your store", inline=False)
     helpEmbed.add_field(name="+bal",value="Shows the balance of your account", inline=False)
+    helpEmbed.add_field(name="+adduser",value="Adds your user", inline=False)
+    helpEmbed.add_field(name="+skins",value="Links to weapon skins available in-game", inline=False)
+    helpEmbed.add_field(name="+reminder",value="Sets reminder of your favourite skin and notifies you if it is available in your store", inline=False)
+    helpEmbed.add_field(name="+updatepass",value="Updates the password", inline=False)
     helpEmbed.set_footer(text="End of Help Section", icon_url="https://media.valorant-api.com/currencies/e59aa87c-4cbf-517a-5983-6e81511be9b7/displayicon.png")
     await context.message.channel.send(embed=helpEmbed)
 
@@ -193,6 +205,14 @@ async def updatepass(ctx,*,args=None):
         else:
             embed=invalidArguments("+updatepass <username> <password> <region>")
             await ctx.channel.send(embed=embed)
+    elif not isinstance(ctx.channel,discord.channel.DMChannel):
+        embed=smallEmbed("Update Password!","+updatepass <username> <password> <region>")
+        await ctx.author.send(embed=embed)
+        embed=smallEmbed("Incorrect channel","Please use this command in private message!")
+        await ctx.channel.send(embed=embed)
+    
+
+
 
 @bot.command(name="reminder")
 async def reminder(ctx,*,args=None):
@@ -215,7 +235,7 @@ async def reminder(ctx,*,args=None):
                 user=db.getUser(username,region)
                 password=user['password']
                 try:
-                    headers,user_id = await getHeader.run(username,password,region)
+                    headers,_ = await getHeader.run(username,password,region)
                     if headers==403:
                         embed = smallEmbed("Update Password!","+updatepass <username> <updated password> <region>")
                         await ctx.channel.send(embed=embed)
@@ -229,40 +249,16 @@ async def reminder(ctx,*,args=None):
                     embed=exceptionEmbed()
                     await ctx.channel.send(embed=embed)
             else:
-                embed=smallEmbed("Please add user","+adduser <username> <password> <region>")
+                embed=smallEmbed("Add user","+adduser <username> <password> <region>")
                 await ctx.channel.send(embed=embed)
         else:
             embed=invalidArguments("+reminder <username> <region> <skin name>")
             await ctx.channel.send(embed=embed)
-
-@bot.command(name="check")
-async def check(ctx,*,args=None):
-    reminders = db.getReminders()
-    for reminder in reminders:
-        if(db.checkUser(reminder['username'],reminder['region'])):
-            user=db.getUser(reminder['username'],reminder['region'])
-            password=user['password']
-            try:
-                headers,user_id = await getHeader.run(reminder['username'],password,reminder['region'])
-                if headers==403:
-                    embed = smallEmbed("Update Password!","+updatepass <username> <updated password> <region>")
-                    await ctx.channel.send(embed=embed)
-                    return
-                else:
-                    res = await getSkinOffers.getStore(headers,user_id,reminder['region'])
-                    for item in res[0]:
-                        if(item[0].lower()==reminder['weapon'].lower()):
-                            embed = discord.Embed(title="Reminder", description=f"This is to inform you that, {reminder['weapon']} is now in your store! 🥳", color=discord.Color.red())
-                            embed.set_thumbnail(url='https://emoji.gg/assets/emoji/confetti.gif')
-                            await ctx.channel.send(embed=embed)
-            except:
-                embed=exceptionEmbed()
-                await ctx.channel.send(embed=embed)
-        else:
-            embed=smallEmbed("Add user","+adduser <username> <password> <region>")
-            await ctx.author.send(embed=embed)
-            embed=smallEmbed("Add user","Please add your user in private message!")
-            await ctx.channel.send(embed=embed)
+    elif not isinstance(ctx.channel,discord.channel.DMChannel):
+        embed=smallEmbed("Set Reminder!","+reminder <username> <region> <skin name>")
+        await ctx.author.send(embed=embed)
+        embed=smallEmbed("Incorrect channel","Please use this command in private message!")
+        await ctx.channel.send(embed=embed)
 
 @bot.command(name="skins")
 async def skins(ctx):
