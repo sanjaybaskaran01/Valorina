@@ -164,14 +164,15 @@ async def bal(ctx,*,args=None):
 @bot.command(name="help")
 async def help_(context):
     helpEmbed = discord.Embed(title="Help",description="Summary of all available commands",color=discord.Color.red())
-    helpEmbed.set_thumbnail(url="https://media.valorant-api.com/currencies/e59aa87c-4cbf-517a-5983-6e81511be9b7/displayicon.png")
+    helpEmbed.set_thumbnail(url="https://i.imgur.com/jnqBJFs.png")
     helpEmbed.add_field(name="+store", value="Shows all the available weapon skins in your store", inline=False)
     helpEmbed.add_field(name="+bal",value="Shows the balance of your account", inline=False)
     helpEmbed.add_field(name="+adduser",value="Adds your user", inline=False)
+    helpEmbed.add_field(name="+updatepass",value="Updates the password", inline=False)
     helpEmbed.add_field(name="+skins",value="Links to weapon skins available in-game", inline=False)
     helpEmbed.add_field(name="+reminder",value="Sets reminder of your favourite skin and notifies you if it is available in your store", inline=False)
-    helpEmbed.add_field(name="+updatepass",value="Updates the password", inline=False)
-    helpEmbed.set_footer(text="End of Help Section", icon_url="https://media.valorant-api.com/currencies/e59aa87c-4cbf-517a-5983-6e81511be9b7/displayicon.png")
+    helpEmbed.add_field(name="+delreminder",value="Deletes the reminder that is set", inline=False)
+    helpEmbed.add_field(name="+showreminder",value="Shows all the reminder that is set by user", inline=False)
     await context.message.channel.send(embed=helpEmbed)
 
 @bot.command(name="updatepass")
@@ -307,7 +308,7 @@ async def delreminder(ctx,*,args=None):
                 embed=smallEmbed("Add user","+adduser <username> <password> <region>")
                 await ctx.channel.send(embed=embed)
         else:
-            embed=invalidArguments("+reminder <username> <region> <skin name>")
+            embed=invalidArguments("+delreminder <username> <region> <skin name>")
             await ctx.channel.send(embed=embed)
     elif not isinstance(ctx.channel,discord.channel.DMChannel):
         embed=smallEmbed("Delete Reminder!","+delreminder <username> <region> <skin name>")
@@ -315,13 +316,12 @@ async def delreminder(ctx,*,args=None):
         embed=smallEmbed("Incorrect channel","Please use this command in private message!")
         await ctx.channel.send(embed=embed)
 
-@bot.command(name="showreminders")
-async def showreminders(ctx,*,args=None):
+@bot.command(name="showreminder")
+async def showreminder(ctx,*,args=None):
     if isinstance(ctx.channel, discord.channel.DMChannel) and ctx.author != bot.user:
         discord_id = ctx.message.author.id
         try:
             res=db.getUserReminders(discord_id)
-            print(res)
             name_array = []
             if res:
                 for item in res:
@@ -329,7 +329,10 @@ async def showreminders(ctx,*,args=None):
                 rems = "\n".join(name_array)
                 embed = thumbnailEmbed("Reminders",rems,"https://cdn.discordapp.com/attachments/812342454820667443/889513920774144030/valo_list.png")
                 await ctx.channel.send(embed=embed)
-        except Exception as e:
+            else:
+                embed=smallEmbed("No reminders found!","+reminder <username> <region> <skin name>")
+                await ctx.channel.send(embed=embed)
+        except:
             embed=exceptionEmbed()
             await ctx.channel.send(embed=embed)
     elif not isinstance(ctx.channel,discord.channel.DMChannel):
