@@ -4,6 +4,7 @@ from discord.embeds import Embed
 from discord.ext.commands.core import command
 from dotenv import load_dotenv
 from discord.ext import commands
+from discord.ext import tasks
 
 from embedReplies import *
 
@@ -18,9 +19,43 @@ TOKEN = os.getenv('TOKEN')
 bot = commands.Bot(command_prefix="+")
 bot.remove_command('help')
 
+@tasks.loop(seconds=60)
+async def check():
+    reminders = db.getReminders()
+    for reminder in reminders:
+        user = await bot.fetch_user(int(reminder['discord_id']))
+        if(db.checkUser(reminder['username'],reminder['region'])):
+            user_db=db.getUser(reminder['username'],reminder['region'])
+            password=user_db['password']
+            try:
+                headers,user_id = await getHeader.run(reminder['username'],password,reminder['region'])
+                if headers==403:
+                    embed = smallEmbed("Update Password!","+updatepass <username> <updated password> <region>")
+                    await user.send(embed=embed)
+                    return
+                else:
+                    res = await getSkinOffers.getStore(headers,user_id,reminder['region'])
+                    for item in res[0]:
+                        if(item[0].lower()==reminder['weapon'].lower()):
+                            embed = discord.Embed(title="Reminder", description=f"This is to inform you that, {reminder['weapon'].title()} is now in your store! 🥳", color=discord.Color.red())
+                            embed.set_image(url=item[2])
+                            embed.set_thumbnail(url='https://emoji.gg/assets/emoji/confetti.gif')
+                            await user.send(embed=embed)
+            except Exception as e:
+                embed=exceptionEmbed()
+                await user.send(embed=embed)
+        else:
+            embed=smallEmbed("Add user","+adduser <username> <password> <region>")
+            await user.send(embed=embed)
+            embed=smallEmbed("Add user","Please add your user in private message!")
+            await user.send(embed=embed)
+
+check.start()
+
 @bot.event
 async def on_ready():
     print(f"We have logged in as {bot.user}")
+
 
 @bot.command(name="store")
 async def store(ctx,*,args=None):
@@ -166,7 +201,12 @@ async def reminder(ctx,*,args=None):
         if args!=None and len(args.split())>0:
             username=args.split()[0]
             region=args.split()[1]
-            weapon=" ".join(args.split()[2:])
+            if(len(args.split()[2:])<2):
+                embed=smallEmbed("Reminder Usage:","+reminder <username> <region> <collection weapon_name>\n Eg. +reminder mycoolusername na Smite Phantom")
+                await ctx.channel.send(embed=embed)
+                return
+            else:
+                weapon=" ".join(args.split()[2:])
             if region not in ['ap','eu','ko','na']:
                 embed = incorrectRegion()
                 await ctx.channel.send(embed=embed)
@@ -186,7 +226,8 @@ async def reminder(ctx,*,args=None):
                             embed = thumbnailEmbed("Reminder Added!","The reminder has been set successfully!","https://emoji.gg/assets/emoji/confetti.gif")
                             await ctx.channel.send(embed=embed)
                 except:
-                    await ctx.channel.send("Please retry")
+                    embed=exceptionEmbed()
+                    await ctx.channel.send(embed=embed)
             else:
                 embed=smallEmbed("Please add user","+adduser <username> <password> <region>")
                 await ctx.channel.send(embed=embed)
@@ -210,7 +251,7 @@ async def check(ctx,*,args=None):
                 else:
                     res = await getSkinOffers.getStore(headers,user_id,reminder['region'])
                     for item in res[0]:
-                        if(item[0]==reminder['weapon']):
+                        if(item[0].lower()==reminder['weapon'].lower()):
                             embed = discord.Embed(title="Reminder", description=f"This is to inform you that, {reminder['weapon']} is now in your store! 🥳", color=discord.Color.red())
                             embed.set_thumbnail(url='https://emoji.gg/assets/emoji/confetti.gif')
                             await ctx.channel.send(embed=embed)
@@ -222,5 +263,14 @@ async def check(ctx,*,args=None):
             await ctx.author.send(embed=embed)
             embed=smallEmbed("Add user","Please add your user in private message!")
             await ctx.channel.send(embed=embed)
+
+@bot.command(name="skins")
+async def skins(ctx):
+    try:
+        embed = discord.Embed(title="List of Valorant Weapons", description=f"https://valorant.fandom.com/wiki/Weapon_Skins", color=discord.Color.red())
+        await ctx.channel.send(embed=embed)
+    except:
+        embed=exceptionEmbed()
+        await ctx.channel.send(embed=embed)
 
 bot.run(TOKEN)

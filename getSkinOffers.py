@@ -19,6 +19,16 @@ def convert(seconds):
     seconds %= 60
     return f"{hour} hours {minutes} minutes and {seconds} seconds remaining"
 
+async def getAllSkins():
+    allSkinNames=[]
+    session = aiohttp.ClientSession()
+    async with session.get(f'https://valorant-api.com/v1/weapons/skins') as r:
+        content=json.loads(await r.text())
+        for item in content['data']:
+            allSkinNames.append({"id":item["uuid"].lower(),"name":item["displayName"]})
+    await session.close()
+    return allSkinNames
+
 async def getSkinDetails(headers,skinPanel,region):
     skinIDcost=[]
     skinNames=[]
@@ -35,7 +45,7 @@ async def getSkinDetails(headers,skinPanel,region):
         async with session.get(f'https://valorant-api.com/v1/weapons/skinlevels/{item}', headers=headers) as r:
             content=json.loads(await r.text())
             skinNames.append({"id":content["data"]["uuid"].lower(),"name":content["data"]["displayName"]})
-            
+        
     await session.close()
     
     for item in offers["Offers"]:
