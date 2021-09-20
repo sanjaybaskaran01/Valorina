@@ -269,4 +269,73 @@ async def skins(ctx):
         embed=exceptionEmbed()
         await ctx.channel.send(embed=embed)
 
+@bot.command(name="delreminder")
+async def delreminder(ctx,*,args=None):
+    if isinstance(ctx.channel, discord.channel.DMChannel) and ctx.author != bot.user:
+        discord_id = ctx.message.author.id
+        if args!=None and len(args.split())>0:
+            username=args.split()[0]
+            region=args.split()[1]
+            if(len(args.split()[2:])<2):
+                embed=smallEmbed("Reminder Usage:","+reminder <username> <region> <collection weapon_name>\n Eg. +reminder mycoolusername na Smite Phantom")
+                await ctx.channel.send(embed=embed)
+                return
+            else:
+                weapon=" ".join(args.split()[2:])
+            if region not in ['ap','eu','ko','na']:
+                embed = incorrectRegion()
+                await ctx.channel.send(embed=embed)
+                return
+            if(db.checkUser(username,region)):
+                user=db.getUser(username,region)
+                password=user['password']
+                try:
+                    headers,_ = await getHeader.run(username,password,region)
+                    if headers==403:
+                        embed = smallEmbed("Update Password!","+updatepass <username> <updated password> <region>")
+                        await ctx.channel.send(embed=embed)
+                        return
+                    else:
+                        res=db.delReminder(username,region,discord_id,weapon)
+                        if res:
+                            embed = thumbnailEmbed("Reminder Deleted!","The reminder has been deleted successfully!","https://emoji.gg/assets/emoji/confetti.gif")
+                            await ctx.channel.send(embed=embed)
+                except:
+                    embed=exceptionEmbed()
+                    await ctx.channel.send(embed=embed)
+            else:
+                embed=smallEmbed("Add user","+adduser <username> <password> <region>")
+                await ctx.channel.send(embed=embed)
+        else:
+            embed=invalidArguments("+reminder <username> <region> <skin name>")
+            await ctx.channel.send(embed=embed)
+    elif not isinstance(ctx.channel,discord.channel.DMChannel):
+        embed=smallEmbed("Delete Reminder!","+delreminder <username> <region> <skin name>")
+        await ctx.author.send(embed=embed)
+        embed=smallEmbed("Incorrect channel","Please use this command in private message!")
+        await ctx.channel.send(embed=embed)
+
+@bot.command(name="showreminders")
+async def showreminders(ctx,*,args=None):
+    if isinstance(ctx.channel, discord.channel.DMChannel) and ctx.author != bot.user:
+        discord_id = ctx.message.author.id
+        try:
+            res=db.getUserReminders(discord_id)
+            print(res)
+            name_array = []
+            if res:
+                for item in res:
+                    name_array.append(item['weapon'].title())
+                rems = "\n".join(name_array)
+                embed = thumbnailEmbed("Reminders",rems,"https://cdn.discordapp.com/attachments/812342454820667443/889513920774144030/valo_list.png")
+                await ctx.channel.send(embed=embed)
+        except Exception as e:
+            embed=exceptionEmbed()
+            await ctx.channel.send(embed=embed)
+    elif not isinstance(ctx.channel,discord.channel.DMChannel):
+        embed=smallEmbed("To show reminder:","+showreminders")
+        await ctx.author.send(embed=embed)
+        embed=smallEmbed("Incorrect channel","Please use this command in private message!")
+        await ctx.channel.send(embed=embed)
+
 bot.run(TOKEN)

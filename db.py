@@ -1,4 +1,5 @@
 from typing import Collection
+import discord
 import pymongo
 from pymongo import MongoClient
 import os
@@ -67,3 +68,16 @@ def getReminders():
     for document in cursor:
           reminders.append(document)
     return reminders
+
+def getUserReminders(discord_id):    
+    collection = db['reminders']
+    reminders = []
+    cursor = collection.find({"discord_id":discord_id})
+    for document in cursor:
+          reminders.append(document)
+    return reminders
+
+def delReminder(username, region, discord_id, weapon):    
+    collection = db['reminders']
+    res = collection.delete_one({"username":username, "region": region, "discord_id": discord_id, "weapon": weapon})
+    return True
