@@ -1,6 +1,4 @@
-import re
 import aiohttp
-import asyncio
 import json
 
 async def getStore(headers,user_id,region):
