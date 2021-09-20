@@ -1,5 +1,4 @@
 import aiohttp
-import asyncio
 
 async def viewBal(headers,puuid,region):
     session = aiohttp.ClientSession()

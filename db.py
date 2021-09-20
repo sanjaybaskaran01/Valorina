@@ -1,6 +1,3 @@
-from typing import Collection
-import discord
-import pymongo
 from pymongo import MongoClient
 import os
 from dotenv import load_dotenv
