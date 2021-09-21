@@ -89,7 +89,7 @@ Check the skins available in your store and balance using Valorina without havin
 <img src="./assets/+bal.gif" alt="+bal" width="500">
 </p>
 
-    +reminder <username> <region>
+    +reminder <username> <region> <skin name>
 <p align="center">
 <img src="./assets/+reminder.gif" alt="+reminder" width="500">
 </p>
