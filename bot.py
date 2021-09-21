@@ -15,6 +15,7 @@ import getBalance
 
 load_dotenv()
 TOKEN = os.getenv('TOKEN')
+# TOKEN = os.getenv('DEV_TOKEN')
 
 bot = commands.Bot(command_prefix="+")
 bot.remove_command('help')
@@ -242,9 +243,18 @@ async def reminder(ctx,*,args=None):
                         await ctx.channel.send(embed=embed)
                         return
                     else:
-                        res=db.addReminder(username,region,discord_id,weapon)
-                        if res:
-                            embed = thumbnailEmbed("Reminder Added!","The reminder has been set successfully!","https://emoji.gg/assets/emoji/confetti.gif")
+                        all_skins = await getSkinOffers.getAllSkins()
+                        for item in all_skins:
+                            if(item["name"].lower()==weapon.lower()):
+                                res=db.addReminder(username,region,discord_id,weapon)
+                                if res:
+                                    embed = discord.Embed(title="Reminder Added!", description="The reminder has been set successfully!", color=discord.Color.red())
+                                    embed.set_image(url=item['img'])
+                                    embed.set_thumbnail(url='https://emoji.gg/assets/emoji/confetti.gif')
+                                    await ctx.channel.send(embed=embed)
+                                    break;
+                        else:
+                            embed = discord.Embed(title="Skin Not Found!", description="The weapon skin that you are looking for doesn't seem to exist.\n You can find all weapon skins here: https://valorant.fandom.com/wiki/Weapon_Skins", color=discord.Color.red())
                             await ctx.channel.send(embed=embed)
                 except:
                     embed=exceptionEmbed()
