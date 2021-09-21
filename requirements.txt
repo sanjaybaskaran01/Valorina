@@ -1,1 +1,5 @@
-discord,dotenv,pymongo,aiohttp,json
+discord
+python-dotenv
+pymongo
+aiohttp
+json
