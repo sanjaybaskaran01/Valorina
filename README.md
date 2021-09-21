@@ -4,7 +4,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <a href="https://github.com/csivitu/Template">
+  <a href="https://discord.com/oauth2/authorize?client_id=888741654482272276&permissions=2147739648&scope=bot" target="_blank">
     <img src="https://i.imgur.com/HiAZ2NE.png" alt="Logo" width="80">
   </a>
 
