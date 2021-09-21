@@ -23,7 +23,7 @@ async def getAllSkins():
     async with session.get(f'https://valorant-api.com/v1/weapons/skins') as r:
         content=json.loads(await r.text())
         for item in content['data']:
-            allSkinNames.append({"id":item["uuid"].lower(),"name":item["displayName"]})
+            allSkinNames.append({"id":item["uuid"].lower(),"name":item["displayName"],"img":item["displayIcon"]})
     await session.close()
     return allSkinNames
 

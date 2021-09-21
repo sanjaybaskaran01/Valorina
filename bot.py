@@ -15,6 +15,7 @@ import getBalance
 
 load_dotenv()
 TOKEN = os.getenv('TOKEN')
+# TOKEN = os.getenv('DEV_TOKEN')
 
 bot = commands.Bot(command_prefix="+")
 bot.remove_command('help')
@@ -165,14 +166,14 @@ async def bal(ctx,*,args=None):
 async def help_(context):
     helpEmbed = discord.Embed(title="Help",description="Summary of all available commands",color=discord.Color.red())
     helpEmbed.set_thumbnail(url="https://i.imgur.com/jnqBJFs.png")
+    helpEmbed.add_field(name="+adduser",value="Adds your user", inline=False)
     helpEmbed.add_field(name="+store", value="Shows all the available weapon skins in your store", inline=False)
     helpEmbed.add_field(name="+bal",value="Shows the balance of your account", inline=False)
-    helpEmbed.add_field(name="+adduser",value="Adds your user", inline=False)
-    helpEmbed.add_field(name="+updatepass",value="Updates the password", inline=False)
-    helpEmbed.add_field(name="+skins",value="Links to weapon skins available in-game", inline=False)
     helpEmbed.add_field(name="+reminder",value="Sets reminder of your favourite skin and notifies you if it is available in your store", inline=False)
-    helpEmbed.add_field(name="+delreminder",value="Deletes the reminder that is set", inline=False)
     helpEmbed.add_field(name="+showreminder",value="Shows all the reminder that is set by user", inline=False)
+    helpEmbed.add_field(name="+delreminder",value="Deletes the reminder that is set", inline=False)
+    helpEmbed.add_field(name="+skins",value="Links to weapon skins available in-game", inline=False)
+    helpEmbed.add_field(name="+updatepass",value="Updates the password", inline=False)
     await context.message.channel.send(embed=helpEmbed)
 
 @bot.command(name="updatepass")
@@ -242,9 +243,18 @@ async def reminder(ctx,*,args=None):
                         await ctx.channel.send(embed=embed)
                         return
                     else:
-                        res=db.addReminder(username,region,discord_id,weapon)
-                        if res:
-                            embed = thumbnailEmbed("Reminder Added!","The reminder has been set successfully!","https://emoji.gg/assets/emoji/confetti.gif")
+                        all_skins = await getSkinOffers.getAllSkins()
+                        for item in all_skins:
+                            if(item["name"].lower()==weapon.lower()):
+                                res=db.addReminder(username,region,discord_id,weapon)
+                                if res:
+                                    embed = discord.Embed(title="Reminder Added!", description="The reminder has been set successfully!", color=discord.Color.red())
+                                    embed.set_image(url=item['img'])
+                                    embed.set_thumbnail(url='https://emoji.gg/assets/emoji/confetti.gif')
+                                    await ctx.channel.send(embed=embed)
+                                    break;
+                        else:
+                            embed = discord.Embed(title="Skin Not Found!", description="The weapon skin that you are looking for doesn't seem to exist.\n You can find all weapon skins here: https://valorant.fandom.com/wiki/Weapon_Skins", color=discord.Color.red())
                             await ctx.channel.send(embed=embed)
                 except:
                     embed=exceptionEmbed()
