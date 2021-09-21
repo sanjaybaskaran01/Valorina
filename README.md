@@ -69,7 +69,7 @@ Check the skins available in your store and balance using Valorina without havin
 </p>
 
     +adduser <username> <password> <region>
-    Adds the user
+    Adds the user (IN DM COMMAND)
 
 <p align="center">
 <img src="./assets/+adduser.gif" alt="+adduser" width="500">
@@ -90,6 +90,8 @@ Check the skins available in your store and balance using Valorina without havin
 </p>
 
     +reminder <username> <region> <skin name>
+    Sets reminder of your favourite skin and notifies you if it is available in your store (IN DM COMMAND)
+    
 <p align="center">
 <img src="./assets/+reminder.gif" alt="+reminder" width="500">
 </p>
