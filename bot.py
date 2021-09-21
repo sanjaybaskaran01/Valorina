@@ -165,14 +165,14 @@ async def bal(ctx,*,args=None):
 async def help_(context):
     helpEmbed = discord.Embed(title="Help",description="Summary of all available commands",color=discord.Color.red())
     helpEmbed.set_thumbnail(url="https://i.imgur.com/jnqBJFs.png")
+    helpEmbed.add_field(name="+adduser",value="Adds your user", inline=False)
     helpEmbed.add_field(name="+store", value="Shows all the available weapon skins in your store", inline=False)
     helpEmbed.add_field(name="+bal",value="Shows the balance of your account", inline=False)
-    helpEmbed.add_field(name="+adduser",value="Adds your user", inline=False)
-    helpEmbed.add_field(name="+updatepass",value="Updates the password", inline=False)
-    helpEmbed.add_field(name="+skins",value="Links to weapon skins available in-game", inline=False)
     helpEmbed.add_field(name="+reminder",value="Sets reminder of your favourite skin and notifies you if it is available in your store", inline=False)
-    helpEmbed.add_field(name="+delreminder",value="Deletes the reminder that is set", inline=False)
     helpEmbed.add_field(name="+showreminder",value="Shows all the reminder that is set by user", inline=False)
+    helpEmbed.add_field(name="+delreminder",value="Deletes the reminder that is set", inline=False)
+    helpEmbed.add_field(name="+skins",value="Links to weapon skins available in-game", inline=False)
+    helpEmbed.add_field(name="+updatepass",value="Updates the password", inline=False)
     await context.message.channel.send(embed=helpEmbed)
 
 @bot.command(name="updatepass")
