@@ -72,7 +72,7 @@ async def store(ctx,*,args=None):
                 headers,user_id = await getHeader.run(username,password,region)
                 if headers==403:
                     embed = smallEmbed("Update Password!","+updatepass <username> <updated password> <region>")
-                    await ctx.channel.send(embed)
+                    await ctx.channel.send(embed=embed)
                     return
                 else:
                     res = await getSkinOffers.getStore(headers,user_id,region)
@@ -188,6 +188,11 @@ async def updatepass(ctx,*,args=None):
             else:
                 try:
                     if(db.checkUser(username,region)):
+                        user=db.getUser(username,region)
+                        if (user['password']==password):
+                            embed=smallEmbed("Password unchanged!","You have entered the same password!")
+                            await ctx.channel.send(embed=embed)
+                            return
                         _,res = await getHeader.run(username,password,region)
                         if(res==403):
                             embed=smallEmbed("Incorrect credentials!","Your login credentials don't match an account in our system")
