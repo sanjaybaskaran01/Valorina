@@ -130,7 +130,6 @@ Distributed under the MIT License. See [`LICENSE`](./LICENSE) for more informati
 
 ## Contributors
 
-Thanks goes to these wonderful people:
 
 <table>
   <tr>
