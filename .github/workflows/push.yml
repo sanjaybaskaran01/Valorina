@@ -1,0 +1,27 @@
+name: CI/CD Push
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  Deploy:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Deploying on Server
+      uses: appleboy/ssh-action@master
+      with: 
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        script: |
+          cd Valorina/
+          git reset --hard
+          git pull
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip3 install -r requirements.txt; fi
+          tmux kill-server
+          tmux new-session -s Valorina -d "python3 bot.py"
+          

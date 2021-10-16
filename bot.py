@@ -22,6 +22,7 @@ bot.remove_command('help')
 
 @bot.event
 async def on_ready():
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="+help"))
     print(f"We have logged in as {bot.user}")
 
 @tasks.loop(hours=24)
