@@ -1,5 +1,7 @@
+[![top.gg][top.gg]][top.gg-url]
 [![valorina][valorina-shield]][valorina-url]
 [![Issues][issues-shield]][issues-url]
+
 
 <!-- PROJECT LOGO -->
 <br />
@@ -14,9 +16,13 @@
     Discord bot for all valorant skin enthusiasts!
     <br />
     <br />
-    <a href="https://discord.com/oauth2/authorize?client_id=888741654482272276&permissions=2147739648&scope=bot"><img src="https://i.imgur.com/lL6VC60.png" alt="Logo" width="115"></a>
+  <a href="https://discord.com/oauth2/authorize?client_id=888741654482272276&permissions=2147739648&scope=bot">
+    <img src="https://i.imgur.com/lL6VC60.png" alt="Logo" width="115">
+  </a>
   </p>
   <p align="center">
+    <a href="https://top.gg/bot/888741654482272276">Top.gg</a>
+    ·
     <a href="https://github.com/sanjaybaskaran01/Valorina/issues">Report Bug</a>
     ·
     <a href="https://github.com/sanjaybaskaran01/Valorina/issues">Request Feature</a>
@@ -127,6 +133,8 @@ Distributed under the MIT License. See [`LICENSE`](./LICENSE) for more informati
 [valorina-url]: https://discord.com/oauth2/authorize?client_id=888741654482272276&permissions=2147739648&scope=bot
 [issues-shield]: https://img.shields.io/github/issues/sanjaybaskaran01/Valorina
 [issues-url]: https://github.com/sanjaybaskaran01/Valorina/issues
+[top.gg]: https://top.gg/api/widget/upvotes/888741654482272276.svg
+[top.gg-url]: https://top.gg/bot/888741654482272276
 
 ## Contributors
 
