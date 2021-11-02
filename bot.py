@@ -175,6 +175,7 @@ async def help_(context):
     helpEmbed.add_field(name="+delreminder",value="Deletes the reminder that is set", inline=False)
     helpEmbed.add_field(name="+skins",value="Links to weapon skins available in-game", inline=False)
     helpEmbed.add_field(name="+updatepass",value="Updates the password", inline=False)
+    helpEmbed.add_field(name="\u200B",value="Join our support server [here](https://discord.gg/zHTGSaAjp8)", inline=False)
     await context.message.channel.send(embed=helpEmbed)
 
 @bot.command(name="updatepass")
@@ -356,5 +357,10 @@ async def showreminder(ctx,*,args=None):
         await ctx.author.send(embed=embed)
         embed=smallEmbed("Incorrect channel","Please use this command in private message!")
         await ctx.channel.send(embed=embed)
+
+
+@bot.command(name="servers")
+async def servers(ctx,*,args=None):
+    await ctx.message.channel.send(f"I'm in {(len(bot.guilds))} servers! 🥳 🎊")
 
 bot.run(TOKEN)
