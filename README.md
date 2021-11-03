@@ -1,4 +1,3 @@
-[![top.gg][top.gg]][top.gg-url]
 [![valorina][valorina-shield]][valorina-url]
 [![Issues][issues-shield]][issues-url]
 
@@ -129,12 +128,10 @@ Distributed under the MIT License. See [`LICENSE`](./LICENSE) for more informati
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[valorina-shield]: https://img.shields.io/badge/valorina-valorina-blue
+[valorina-shield]: https://img.shields.io/endpoint?url=https%3A%2F%2Fserver-count-onvhh6kqt-sanjaybaskaran01.vercel.app%2Fapi
 [valorina-url]: https://discord.com/oauth2/authorize?client_id=888741654482272276&permissions=2147739648&scope=bot
-[issues-shield]: https://img.shields.io/github/issues/sanjaybaskaran01/Valorina
+[issues-shield]: https://img.shields.io/github/issues/sanjaybaskaran01/Valorina?style=for-the-badge
 [issues-url]: https://github.com/sanjaybaskaran01/Valorina/issues
-[top.gg]: https://top.gg/api/widget/upvotes/888741654482272276.svg
-[top.gg-url]: https://top.gg/bot/888741654482272276
 
 ## Contributors
 
