@@ -20,8 +20,8 @@ jobs:
           cd Valorina/
           git reset --hard
           git pull
-          /usr/bin/python3 -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          /usr/bin/python3 -m pip3 install --upgrade pip3
+          if [ -f requirements.txt ]; then pip3 install -r requirements.txt; fi
           tmux kill-server
           tmux new-session -s Valorina -d "python3 bot.py"
           
