@@ -1,3 +1,4 @@
+from bson.objectid import ObjectId
 from pymongo import MongoClient
 import os
 from dotenv import load_dotenv
@@ -6,6 +7,7 @@ from cryptography.fernet import Fernet
 load_dotenv()
 MONGO = os.getenv('MONGO')
 KEY = (os.getenv('KEY')).encode('utf-8')
+ID = (os.getenv('ID'))
 cluster = MongoClient(MONGO)
 db = cluster["discord"]
 
@@ -78,3 +80,9 @@ def delReminder(username, region, discord_id, weapon):
     collection = db['reminders']
     res = collection.delete_one({"username":username, "region": region, "discord_id": discord_id, "weapon": weapon})
     return True
+
+def updateServerCount(count):
+    collection = db['servers']
+    collection.update_one(
+            {'_id':ObjectId(ID)},
+            {"$set":{'server_count':count}})

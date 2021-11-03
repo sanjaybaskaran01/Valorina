@@ -25,6 +25,11 @@ async def on_ready():
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="+help"))
     print(f"We have logged in as {bot.user}")
 
+@bot.event
+async def on_guild_join():
+    count = len(bot.guilds)
+    db.updateServerCount(count)
+
 @tasks.loop(hours=24)
 async def sendReminder():
     reminders = db.getReminders()
