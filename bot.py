@@ -14,8 +14,8 @@ import db
 import getBalance
 
 load_dotenv()
-# TOKEN = os.getenv('TOKEN')
-TOKEN = os.getenv('DEV_TOKEN')
+TOKEN = os.getenv('TOKEN')
+# TOKEN = os.getenv('DEV_TOKEN')
 
 bot = commands.Bot(command_prefix="+")
 bot.remove_command('help')
@@ -319,7 +319,7 @@ async def delreminder(ctx,*,args=None):
                         await ctx.channel.send(embed=embed)
                         return
                     else:
-                        res=db.delReminder(username,region,discord_id,weapon)
+                        res=db.delReminder(username,region,discord_id,weapon.lower())
                         print(res)
                         if res:
                             embed = thumbnailEmbed("Reminder Deleted!","The reminder has been deleted successfully!","https://emoji.gg/assets/emoji/confetti.gif")

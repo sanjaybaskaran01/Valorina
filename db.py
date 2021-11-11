@@ -55,7 +55,7 @@ def addReminder(username,region,discord_id,weapon):
             "username":username,
             "region":region,
             "discord_id":discord_id,
-            "weapon":weapon,
+            "weapon":weapon.lower(),
             }
     collection.insert_one(data)
     return True
