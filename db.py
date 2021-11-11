@@ -78,8 +78,13 @@ def getUserReminders(discord_id):
 
 def delReminder(username, region, discord_id, weapon):    
     collection = db['reminders']
-    res = collection.delete_one({"username":username, "region": region, "discord_id": discord_id, "weapon": weapon})
-    return True
+    res_find = collection.find_one({"username":username, "region": region, "discord_id": discord_id, "weapon": weapon})
+    print(res_find)
+    if(res_find):
+        res = collection.delete_one({"username":username, "region": region, "discord_id": discord_id, "weapon": weapon})
+        return True
+    else:
+        return False
 
 def updateServerCount(count):
     collection = db['servers']

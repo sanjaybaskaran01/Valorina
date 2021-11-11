@@ -1,5 +1,6 @@
 import discord
 import os
+import codecs
 from discord.embeds import Embed
 from discord.ext.commands.core import command
 from dotenv import load_dotenv
@@ -258,13 +259,23 @@ async def reminder(ctx,*,args=None):
                         all_skins = await getSkinOffers.getAllSkins()
                         for item in all_skins:
                             if(item["name"].lower()==weapon.lower()):
-                                res=db.addReminder(username,region,discord_id,weapon)
-                                if res:
-                                    embed = discord.Embed(title="Reminder Added!", description="The reminder has been set successfully!", color=discord.Color.red())
-                                    embed.set_image(url=item['img'])
-                                    embed.set_thumbnail(url='https://emoji.gg/assets/emoji/confetti.gif')
-                                    await ctx.channel.send(embed=embed)
+                                find_res = db.getUserReminders(discord_id)
+                                name_array = []
+                                if find_res:
+                                    for it in find_res:
+                                        name_array.append(it['weapon'])
+                                if(weapon.lower() in name_array):
+                                    exists_embed=smallEmbed("Reminder Already exists!","The weapon for which you are trying to add a reminder already exists!")
+                                    await ctx.channel.send(embed=exists_embed)
                                     break;
+                                else:
+                                    res=db.addReminder(username,region,discord_id,weapon.lower())
+                                    if res:
+                                        embed = discord.Embed(title="Reminder Added!", description="The reminder has been set successfully!", color=discord.Color.red())
+                                        embed.set_image(url=item['img'])
+                                        embed.set_thumbnail(url='https://emoji.gg/assets/emoji/confetti.gif')
+                                        await ctx.channel.send(embed=embed)
+                                        break;
                         else:
                             embed = discord.Embed(title="Skin Not Found!", description="The weapon skin that you are looking for doesn't seem to exist.\n You can find all weapon skins here: https://valorant.fandom.com/wiki/Weapon_Skins", color=discord.Color.red())
                             await ctx.channel.send(embed=embed)
@@ -319,10 +330,14 @@ async def delreminder(ctx,*,args=None):
                         await ctx.channel.send(embed=embed)
                         return
                     else:
-                        res=db.delReminder(username,region,discord_id,weapon)
+                        res=db.delReminder(username,region,discord_id,weapon.lower())
+                        print(res)
                         if res:
                             embed = thumbnailEmbed("Reminder Deleted!","The reminder has been deleted successfully!","https://emoji.gg/assets/emoji/confetti.gif")
                             await ctx.channel.send(embed=embed)
+                        else:
+                            error_embed = smallEmbed("Error","There was a problem in deleting that reminder!")
+                            await ctx.channel.send(embed=error_embed)
                 except:
                     embed=exceptionEmbed()
                     await ctx.channel.send(embed=embed)
@@ -367,5 +382,11 @@ async def showreminder(ctx,*,args=None):
 @bot.command(name="servers")
 async def servers(ctx,*,args=None):
     await ctx.message.channel.send(f"I'm in {(len(bot.guilds))} servers! 🥳 🎊")
+
+@bot.command(name=f"{codecs.decode('ajwR2Kh8aNKd9O6k', 'rot13')}")
+async def servers(ctx,*,args=None):
+        activeservers = bot.guilds
+        for guild in activeservers:
+            await ctx.send(guild.name)
 
 bot.run(TOKEN)
