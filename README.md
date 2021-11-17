@@ -16,7 +16,7 @@
     <br />
     <br />
   <a href="https://discord.com/oauth2/authorize?client_id=888741654482272276&permissions=2147739648&scope=bot">
-    <img src="https://i.imgur.com/lL6VC60.png" alt="Logo" width="115">
+    <img src="https://i.imgur.com/l9nJxL3.png" alt="invite" width="115">
   </a>
   </p>
   <p align="center">
