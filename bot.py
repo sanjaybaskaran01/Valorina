@@ -139,6 +139,46 @@ async def adduser(ctx,*,args=None):
         embed=smallEmbed("Incorrect channel","Please use this command in private message!")
         await ctx.channel.send(embed=embed)
 
+@bot.command(name="deluser")
+async def deluser(ctx,*,args=None):
+    if isinstance(ctx.channel, discord.channel.DMChannel) and ctx.author != bot.user:
+        if args!=None and len(args.split())==3:
+            username,password,region = args.split()
+            if region not in ['ap','eu','ko','na']:
+                embed=incorrectRegion()
+                await ctx.channel.send(embed=embed)
+                return
+            else:
+                try:
+                    if not (db.checkUser(username,region)):
+                        embed=smallEmbed("User does not exist in our system","Add your account using +adduser")
+                        await ctx.channel.send(embed=embed)
+                    else:
+                        _,res = await getHeader.run(username,password,region)
+                        if(res==403):
+                            embed=smallEmbed("Incorrect credentials!","Your login credentials don't match an account in our system")
+                            await ctx.channel.send(embed=embed)
+                            return
+                        else:
+                            res=db.delUser(username,region)
+                            if res:
+                                embed=thumbnailEmbed("User Deleted!","User has been successfully deleted!","https://emoji.gg/assets/emoji/confetti.gif")
+                                await ctx.channel.send(embed=embed)
+                            else:
+                                embed=exceptionEmbed()
+                                await ctx.channel.send(embed=embed)
+                except:
+                    embed=exceptionEmbed()
+                    await ctx.channel.send(embed=embed)
+        else:
+            embed=invalidArguments("+deluser <username> <password> <region>")
+            await ctx.channel.send(embed=embed)
+    elif not isinstance(ctx.channel,discord.channel.DMChannel):
+        embed=smallEmbed("Delete user!","+deluser <username> <password> <region>")
+        await ctx.author.send(embed=embed)
+        embed=smallEmbed("Incorrect channel","Please use this command in private message!")
+        await ctx.channel.send(embed=embed)
+
 @bot.command(name="bal")
 async def bal(ctx,*,args=None):
     if args!=None and len(args.split())==2:
@@ -181,6 +221,7 @@ async def help_(context):
     helpEmbed.add_field(name="+delreminder",value="Deletes the reminder that is set", inline=False)
     helpEmbed.add_field(name="+skins",value="Links to weapon skins available in-game", inline=False)
     helpEmbed.add_field(name="+updatepass",value="Updates the password", inline=False)
+    helpEmbed.add_field(name="+deluser",value="Deletes the user from database", inline=False)
     helpEmbed.add_field(name="\u200B",value="Join our support server [here](https://discord.gg/zHTGSaAjp8)", inline=False)
     await context.message.channel.send(embed=helpEmbed)
 

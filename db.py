@@ -86,6 +86,14 @@ def delReminder(username, region, discord_id, weapon):
     else:
         return False
 
+def delUser(username,region):
+    try:
+        collection = db[region]
+        collection.delete_one({"username":username})
+        return True
+    except:
+        return False
+
 def updateServerCount(count):
     collection = db['servers']
     collection.update_one(
