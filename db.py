@@ -90,6 +90,8 @@ def delUser(username,region):
     try:
         collection = db[region]
         collection.delete_one({"username":username})
+        collection = db['reminders']
+        collection.delete_many({"username":username,"region":region})
         return True
     except:
         return False
