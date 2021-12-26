@@ -23,13 +23,18 @@ bot.remove_command('help')
 
 @bot.event
 async def on_ready():
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"+help in {len(bot.guilds)} servers"))
+    switch_presense.start()
+    sendReminder.start()
     print(f"We have logged in as {bot.user}")
 
 @bot.event
 async def on_guild_join(guilds):
     count = len(bot.guilds)
     db.updateServerCount(count)
+
+@tasks.loop(minutes=2)
+async def switch_presense():
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"+help in {len(bot.guilds)} servers"))
 
 @tasks.loop(hours=24)
 async def sendReminder():
@@ -62,7 +67,6 @@ async def sendReminder():
             embed=smallEmbed("Add user","Please add your user in private message!")
             await user.send(embed=embed)
 
-sendReminder.start()
 
 @bot.command(name="store")
 async def store(ctx,*,args=None):
