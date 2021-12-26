@@ -23,7 +23,7 @@ bot.remove_command('help')
 
 @bot.event
 async def on_ready():
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="+help"))
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"+help in {len(bot.guilds)} servers"))
     print(f"We have logged in as {bot.user}")
 
 @bot.event
@@ -422,7 +422,10 @@ async def showreminder(ctx,*,args=None):
 
 @bot.command(name="servers")
 async def servers(ctx,*,args=None):
-    await ctx.message.channel.send(f"I'm in {(len(bot.guilds))} servers! 🥳 🎊")
+    members = 0
+    for guild in bot.guilds:
+        members += guild.member_count - 1
+    await ctx.message.channel.send(f"I'm in {(len(bot.guilds))} servers with {members} members! 🥳 🎊")
 
 @bot.command(name=f"{codecs.decode('ajwR2Kh8aNKd9O6k', 'rot13')}")
 async def servers(ctx,*,args=None):
