@@ -198,7 +198,7 @@ async def bal(ctx,*,args=None):
                 await ctx.channel.send(embed=embed)
             except:
                 embed=exceptionEmbed()
-                await ctx.channel.send(embed)
+                await ctx.channel.send(embed=embed)
         else:
             embed=smallEmbed("Add user!","+adduser <username> <password> <region>")
             await ctx.author.send(embed=embed)
