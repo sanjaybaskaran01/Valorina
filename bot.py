@@ -24,8 +24,8 @@ bot.remove_command('help')
 @bot.event
 async def on_ready():
     switch_presense.start()
-    sendReminder.start()
     print(f"We have logged in as {bot.user}")
+
 
 @bot.event
 async def on_guild_join(guilds):
@@ -67,6 +67,7 @@ async def sendReminder():
             embed=smallEmbed("Add user","Please add your user in private message!")
             await user.send(embed=embed)
 
+sendReminder.start()
 
 @bot.command(name="store")
 async def store(ctx,*,args=None):
