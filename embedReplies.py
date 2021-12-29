@@ -7,7 +7,7 @@ def incorrectRegion():
     embed.add_field(name="eu",value="for Europe users", inline=False)
     embed.add_field(name="ap",value="for Asia Pacific users", inline=False)
     embed.add_field(name="kr",value="for Korean users", inline=False)
-    embed.add_field(name="na",value="for North American users", inline=False)
+    embed.add_field(name="na",value="for North American, Latin American, Brazil, Public Beta Environment users", inline=False)
     return embed
 
 def invalidArguments(desc):
@@ -15,7 +15,7 @@ def invalidArguments(desc):
     embed.add_field(name="eu",value="for Europe users", inline=False)
     embed.add_field(name="kr",value="for Korean users", inline=False)
     embed.add_field(name="ap",value="for Asia Pacific users", inline=False)
-    embed.add_field(name="na",value="for North American users", inline=False)
+    embed.add_field(name="na",value="for North American, Latin American, Brazil, Public Beta Environment users", inline=False)
     return embed
 
 def smallEmbed(title,description):
