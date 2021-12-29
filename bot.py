@@ -32,7 +32,7 @@ async def on_guild_join(guilds):
     count = len(bot.guilds)
     db.updateServerCount(count)
 
-@tasks.loop(minutes=2)
+@tasks.loop(hours=2)
 async def switch_presense():
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"+help in {len(bot.guilds)} servers"))
 
@@ -73,7 +73,7 @@ sendReminder.start()
 async def store(ctx,*,args=None):
     if args!=None and len(args.split())==2:
         username,region=args.split()
-        if region not in ['ap','eu','ko','na']:
+        if region not in ['ap','eu','kr','na']:
             embed = incorrectRegion()
             await ctx.channel.send(embed=embed)
             return
@@ -112,7 +112,7 @@ async def adduser(ctx,*,args=None):
     if isinstance(ctx.channel, discord.channel.DMChannel) and ctx.author != bot.user:
         if args!=None and len(args.split())==3:
             username,password,region = args.split()
-            if region not in ['ap','eu','ko','na']:
+            if region not in ['ap','eu','kr','na']:
                 embed=incorrectRegion()
                 await ctx.channel.send(embed=embed)
                 return
@@ -149,7 +149,7 @@ async def deluser(ctx,*,args=None):
     if isinstance(ctx.channel, discord.channel.DMChannel) and ctx.author != bot.user:
         if args!=None and len(args.split())==3:
             username,password,region = args.split()
-            if region not in ['ap','eu','ko','na']:
+            if region not in ['ap','eu','kr','na']:
                 embed=incorrectRegion()
                 await ctx.channel.send(embed=embed)
                 return
@@ -188,7 +188,7 @@ async def deluser(ctx,*,args=None):
 async def bal(ctx,*,args=None):
     if args!=None and len(args.split())==2:
         username,region=args.split()
-        if region not in ['ap','eu','ko','na']:
+        if region not in ['ap','eu','kr','na']:
             embed=incorrectRegion()
             await ctx.channel.send(embed=embed)
             return
@@ -235,7 +235,7 @@ async def updatepass(ctx,*,args=None):
     if isinstance(ctx.channel, discord.channel.DMChannel) and ctx.author != bot.user:
         if args!=None and len(args.split())==3:
             username,password,region = args.split()
-            if region not in ['ap','eu','ko','na']:
+            if region not in ['ap','eu','kr','na']:
                 embed=incorrectRegion()
                 await ctx.channel.send(embed=embed)
                 return
@@ -288,7 +288,7 @@ async def reminder(ctx,*,args=None):
                 return
             else:
                 weapon=" ".join(args.split()[2:])
-            if region not in ['ap','eu','ko','na']:
+            if region not in ['ap','eu','kr','na']:
                 embed = incorrectRegion()
                 await ctx.channel.send(embed=embed)
                 return
@@ -362,7 +362,7 @@ async def delreminder(ctx,*,args=None):
                 return
             else:
                 weapon=" ".join(args.split()[2:])
-            if region not in ['ap','eu','ko','na']:
+            if region not in ['ap','eu','kr','na']:
                 embed = incorrectRegion()
                 await ctx.channel.send(embed=embed)
                 return

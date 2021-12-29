@@ -6,14 +6,14 @@ def incorrectRegion():
     embed = discord.Embed(title="Incorrect Region", description="Use one of the following regions", color=discord.Color.red(),inline=True)
     embed.add_field(name="eu",value="for Europe users", inline=False)
     embed.add_field(name="ap",value="for Asia Pacific users", inline=False)
-    embed.add_field(name="ko",value="for Korean users", inline=False)
+    embed.add_field(name="kr",value="for Korean users", inline=False)
     embed.add_field(name="na",value="for North American users", inline=False)
     return embed
 
 def invalidArguments(desc):
     embed = discord.Embed(title="Invalid arguments", description=desc, color=discord.Color.red(),inline=True)
     embed.add_field(name="eu",value="for Europe users", inline=False)
-    embed.add_field(name="ko",value="for Korean users", inline=False)
+    embed.add_field(name="kr",value="for Korean users", inline=False)
     embed.add_field(name="ap",value="for Asia Pacific users", inline=False)
     embed.add_field(name="na",value="for North American users", inline=False)
     return embed
