@@ -58,8 +58,12 @@ async def sendReminder():
                             embed = discord.Embed(title="Reminder", description=f"This is to inform you that, {reminder['weapon'].title()} is now in your store! 🥳", color=discord.Color.red())
                             embed.set_image(url=item[2])
                             embed.set_thumbnail(url='https://emoji.gg/assets/emoji/confetti.gif')
-                            await user.send(embed=embed)
+                            try:
+                                await user.send(embed=embed)
+                            except Exception as e:
+                                print("This is inside item"+e)
             except Exception as e:
+                print("This is the problem"+e)
                 embed=exceptionEmbed()
                 await user.send(embed=embed)
         else:
