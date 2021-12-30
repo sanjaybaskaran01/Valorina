@@ -21,6 +21,6 @@ jobs:
           git reset --hard
           git pull
           if [ -f requirements.txt ]; then pip3 install -r requirements.txt; fi
-          tmux kill-server
+          tmux kill-session -t Valorina
           tmux new-session -s Valorina -d "python3 bot.py"
           

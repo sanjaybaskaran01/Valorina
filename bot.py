@@ -62,8 +62,10 @@ async def sendReminder():
                                 await user.send(embed=embed)
                             except Exception as e:
                                 print(e)
+                                continue
             except Exception as e:
                 print(e)
+                continue
         else:
             try:
                 embed=smallEmbed("Add user","+adduser <username> <password> <region>")
@@ -72,6 +74,7 @@ async def sendReminder():
                 await user.send(embed=embed)
             except Exception as e:
                 print(e)
+                continue
 
 
 @bot.command(name="store")
