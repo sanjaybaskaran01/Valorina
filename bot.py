@@ -24,6 +24,7 @@ bot.remove_command('help')
 @bot.event
 async def on_ready():
     switch_presense.start()
+    sendReminder.start()
     print(f"We have logged in as {bot.user}")
 
 
@@ -62,12 +63,14 @@ async def sendReminder():
                 embed=exceptionEmbed()
                 await user.send(embed=embed)
         else:
-            embed=smallEmbed("Add user","+adduser <username> <password> <region>")
-            await user.send(embed=embed)
-            embed=smallEmbed("Add user","Please add your user in private message!")
-            await user.send(embed=embed)
+            try:
+                embed=smallEmbed("Add user","+adduser <username> <password> <region>")
+                await user.send(embed=embed)
+                embed=smallEmbed("Add user","Please add your user in private message!")
+                await user.send(embed=embed)
+            except Exception as e:
+                print(e)
 
-sendReminder.start()
 
 @bot.command(name="store")
 async def store(ctx,*,args=None):
