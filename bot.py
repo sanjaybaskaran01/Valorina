@@ -61,11 +61,9 @@ async def sendReminder():
                             try:
                                 await user.send(embed=embed)
                             except Exception as e:
-                                print("This is inside item"+e)
+                                print(e)
             except Exception as e:
-                print("This is the problem"+e)
-                embed=exceptionEmbed()
-                await user.send(embed=embed)
+                print(e)
         else:
             try:
                 embed=smallEmbed("Add user","+adduser <username> <password> <region>")
