@@ -18,7 +18,7 @@ load_dotenv()
 TOKEN = os.getenv('TOKEN')
 # TOKEN = os.getenv('DEV_TOKEN')
 
-bot = commands.Bot(command_prefix="+")
+bot = commands.AutoShardedBot(command_prefix="+")
 bot.remove_command('help')
 
 @bot.event
