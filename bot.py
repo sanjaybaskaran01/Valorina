@@ -22,8 +22,10 @@ bot.remove_command('help')
 
 @bot.event
 async def on_ready():
-    switch_presense.start()
-    sendReminder.start()
+    if not sendReminder.is_running():
+        sendReminder.start()
+    if not switch_presense.is_running():
+        switch_presense.start()
     print(f"We have logged in as {bot.user}")
 
 
