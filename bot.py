@@ -12,7 +12,7 @@ from embedReplies import *
 import getSkinOffers
 import getHeader
 import db
-import getBalanceeird
+import getBalance
 load_dotenv()
 TOKEN = os.getenv('TOKEN')
 # TOKEN = os.getenv('DEV_TOKEN')
