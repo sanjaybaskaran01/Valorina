@@ -41,17 +41,18 @@ async def switch_presense():
 @tasks.loop(hours=24)
 async def sendReminder():
     reminders = db.getReminders()
+    # reminders = db.getDevReminders() #DEV
     for reminder in reminders:
-        user = await bot.fetch_user(int(reminder['discord_id']))
         if(db.checkUser(reminder['username'],reminder['region'])):
+            user = await bot.fetch_user(int(reminder['discord_id']))
             user_db=db.getUser(reminder['username'],reminder['region'])
             password=user_db['password']
             try:
                 headers,user_id = await getHeader.run(reminder['username'],password,reminder['region'])
                 if headers==403:
                     embed = smallEmbed("Update Password!","+updatepass <username> <updated password> <region>")
-                    await user.send(embed=embed)
-                    return
+                    # await user.send(embed=embed)
+                    continue
                 else:
                     res = await getSkinOffers.getStore(headers,user_id,reminder['region'])
                     for item in res[0]:
@@ -70,9 +71,9 @@ async def sendReminder():
         else:
             try:
                 embed=smallEmbed("Add user","+adduser <username> <password> <region>")
-                await user.send(embed=embed)
+                # await user.send(embed=embed)
                 embed=smallEmbed("Add user","Please add your user in private message!")
-                await user.send(embed=embed)
+                # await user.send(embed=embed)
             except Exception as e:
                 print(e)
                 continue
@@ -148,10 +149,10 @@ async def adduser(ctx,*,args=None):
             embed=invalidArguments("+adduser <username> <password> <region>")
             await ctx.channel.send(embed=embed)
     elif not isinstance(ctx.channel,discord.channel.DMChannel):
-        embed=smallEmbed("Add user!","+adduser <username> <password> <region>")
-        await ctx.author.send(embed=embed)
         embed=smallEmbed("Incorrect channel","Please use this command in private message!")
         await ctx.channel.send(embed=embed)
+        embed=smallEmbed("Add user!","+adduser <username> <password> <region>")
+        await ctx.author.send(embed=embed)
 
 @bot.command(name="deluser")
 async def deluser(ctx,*,args=None):

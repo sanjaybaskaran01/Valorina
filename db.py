@@ -68,6 +68,14 @@ def getReminders():
           reminders.append(document)
     return reminders
 
+def getDevReminders():    
+    collection = db['dev_reminders']
+    reminders = []
+    cursor = collection.find({})
+    for document in cursor:
+          reminders.append(document)
+    return reminders
+
 def getUserReminders(discord_id):    
     collection = db['reminders']
     reminders = []
