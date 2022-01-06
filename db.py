@@ -109,3 +109,8 @@ def updateServerCount(count):
     collection.update_one(
             {'_id':ObjectId(ID)},
             {"$set":{'server_count':count}})
+
+def getServerCount():
+    collection = db['servers']
+    res = collection.find_one({'_id':ObjectId(ID)})
+    return res

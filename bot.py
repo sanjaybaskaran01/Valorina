@@ -34,9 +34,20 @@ async def on_guild_join(guilds):
     count = len(bot.guilds)
     db.updateServerCount(count)
 
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandNotFound):
+        embed=smallEmbed("Command not found!","Please use +help to use the available commands!")
+        try:
+            await ctx.send(embed=embed)
+        except Exception as e:
+            print(e)
+
+
 @tasks.loop(hours=2)
 async def switch_presense():
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"+help in {len(bot.guilds)} servers"))
+    serverCount = db.getServerCount()
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"+help in {serverCount['server_count']} servers"))
 
 @tasks.loop(hours=24)
 async def sendReminder():
@@ -62,11 +73,16 @@ async def sendReminder():
                             embed.set_thumbnail(url='https://emoji.gg/assets/emoji/confetti.gif')
                             try:
                                 await user.send(embed=embed)
+                                print(f'{user.id} , {user.display_name} has gotten reminder')
                             except Exception as e:
+                                print("Exception while sending user embed \n")
                                 print(e)
+                                # logger.error(e)
                                 continue
             except Exception as e:
+                print("Exception after headers \n")
                 print(e)
+                print("\n")
                 continue
         else:
             try:
@@ -75,7 +91,9 @@ async def sendReminder():
                 embed=smallEmbed("Add user","Please add your user in private message!")
                 # await user.send(embed=embed)
             except Exception as e:
+                print("Exception after everything \n")
                 print(e)
+                print("\n")
                 continue
 
 
@@ -447,5 +465,6 @@ async def servers(ctx,*,args=None):
         activeservers = bot.guilds
         for guild in activeservers:
             await ctx.send(guild.name)
+
 
 bot.run(TOKEN)
