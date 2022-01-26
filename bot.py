@@ -16,14 +16,16 @@ import getBalance
 load_dotenv()
 TOKEN = os.getenv('TOKEN')
 # TOKEN = os.getenv('DEV_TOKEN')
+# TOKEN = os.getenv('DEV_TOKEN3')
+
 
 bot = commands.AutoShardedBot(shard_count=5, command_prefix="+")
 bot.remove_command('help')
 
 @bot.event
 async def on_ready():
-    if not sendReminder.is_running():
-        sendReminder.start()
+    # if not sendReminder.is_running():
+        # sendReminder.start()
     if not switch_presense.is_running():
         switch_presense.start()
     print(f"We have logged in as {bot.user}")
@@ -112,6 +114,14 @@ async def store(ctx,*,args=None):
                 headers,user_id = await getHeader.run(username,password,region)
                 if headers==403:
                     embed = smallEmbed("Update Password!","+updatepass <username> <updated password> <region>")
+                    await ctx.channel.send(embed=embed)
+                    return
+                elif headers==429:
+                    embed = smallEmbed("Rate Limited!",f'{username} has been rate limited by Riot.\nPlease try again after 10 minutes')
+                    await ctx.channel.send(embed=embed)
+                    return
+                elif headers==405:
+                    embed = smallEmbed("2FA Detected!",f'{username} has enabled 2FA.\nPlease try again after switching off 2FA')
                     await ctx.channel.send(embed=embed)
                     return
                 else:
@@ -405,7 +415,6 @@ async def delreminder(ctx,*,args=None):
                         return
                     else:
                         res=db.delReminder(username,region,discord_id,weapon.lower())
-                        print(res)
                         if res:
                             embed = thumbnailEmbed("Reminder Deleted!","The reminder has been deleted successfully!","https://emoji.gg/assets/emoji/confetti.gif")
                             await ctx.channel.send(embed=embed)
