@@ -1,6 +1,5 @@
 import discord
 import os
-import codecs
 from discord.embeds import Embed
 from discord.ext.commands.core import command
 from dotenv import load_dotenv
@@ -468,12 +467,6 @@ async def servers(ctx,*,args=None):
     for guild in bot.guilds:
         members += guild.member_count - 1
     await ctx.message.channel.send(f"I'm in {(len(bot.guilds))} servers with {members} members! 🥳 🎊")
-
-@bot.command(name=f"{codecs.decode('ajwR2Kh8aNKd9O6k', 'rot13')}")
-async def servers(ctx,*,args=None):
-        activeservers = bot.guilds
-        for guild in activeservers:
-            await ctx.send(guild.name)
 
 
 bot.run(TOKEN)
